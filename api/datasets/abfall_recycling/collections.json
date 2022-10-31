@@ -1,0 +1,32 @@
+[
+  {
+    "name": "abfall_recycling_4_textil",
+    "spatialExtent": "",
+    "temporalExtent": ""
+  },
+  {
+    "name": "abfall_recycling_3_lvp",
+    "spatialExtent": "",
+    "temporalExtent": ""
+  },
+  {
+    "name": "abfall_recycling_6_recyhof",
+    "spatialExtent": "",
+    "temporalExtent": ""
+  },
+  {
+    "name": "abfall_recycling_5_elektro",
+    "spatialExtent": "",
+    "temporalExtent": ""
+  },
+  {
+    "name": "abfall_recycling_2_glas",
+    "spatialExtent": "",
+    "temporalExtent": ""
+  },
+  {
+    "name": "abfall_recycling_1_papier",
+    "spatialExtent": "",
+    "temporalExtent": ""
+  }
+]

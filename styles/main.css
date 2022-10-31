@@ -1,0 +1,83 @@
+.lead { white-space: pre-wrap; font-size: 1.0rem; } 
+
+.navbar { background-color: #002f63; justify-content: space-between; } 
+
+.navbar-expand-sm{ justify-content: ignore; } 
+
+.table{ table-layout: fixed; word-wrap: break-word; } 
+
+.mt-5{ font-size: 2.0rem; margin-bottom: 1rem; } 
+
+.h5{ font-size: 1.0rem; } 
+
+.ol-attribution li { font-size: small; } 
+
+.ol-attribution ul { padding: 0em; } 
+
+@media (max-width: 60em) { 
+    .navbar-brand { background: url("/UrbanDataPlatform_NEG.png") center / contain no-repeat; width: 50%; height: 50px; margin-left: 25%; margin-right: 25%; } 
+    #breadcrump{ display: flex; flex-direction:inherit; flex-wrap: wrap; position: relative; padding-left: 0; margin-right: auto; padding-right: 0%; } 
+    .justify-content-end{ display: flex; flex-direction:inherit; flex-wrap: wrap; position: relative; margin-left: auto; } 
+    .px-md-5 { margin-left: 2rem; } 
+    .footer-brand-left { background: url("/Hamburg_Bug.png") center / contain no-repeat; width: 310px; height: 110px; display: block; margin: -30px; overflow: hidden; position: absolute; transform: translateY(-42px); pointer-events: none; } 
+}
+
+@media (min-width: 60em) { 
+    .navbar-brand { background: url("/UrbanDataPlatform_NEG.png") center / contain no-repeat; width: 200px; height: 50px; } 
+    #breadcrump{ display: flex; flex-direction:inherit; flex-wrap: wrap; position: absolute; padding-left: 19%; margin-left: auto; margin-right: 25%; } 
+    .footer-brand-left { background: url("/Hamburg_Bug.png") center / contain no-repeat; width: 510px; height: 110px; display: block; margin: -30px; overflow: hidden; position: absolute; transform: translateY(-42px); pointer-events: none; } 
+}
+
+nav .breadcrumb-item.active { color: #69b6d4; } 
+
+.nav-link.breamcrump-item.active { color: #6c757d } 
+
+nav .breadcrumb-item a:link { color: #ffffff; } 
+
+nav .breadcrumb-item a:visited { color: #ffffff; } 
+
+nav .breadcrumb-item a:hover { color: #69b6d4; text-decoration: underline; } 
+
+nav .breadcrumb-item a:active { } 
+
+/* Formats */ 
+
+nav .nav-link.disabled:link { color: #69b6d4; } 
+
+nav .nav-link:link { color: #ffffff; } nav .nav-link:visited { color: #ffffff; } 
+
+nav .nav-link:hover { color: #699b6d4; text-decoration: underline; } 
+
+nav .nav-link:active { } 
+
+/* Footer */ 
+
+html { height: 100%; } 
+
+body { position: relative; margin: 0; padding-bottom: 6rem; min-height: 100%; } 
+
+.nav-link{ padding: 1rem 1rem; } 
+
+.footer-brand-right { background: url("/HH_Sonder-Logo_RGB_negativ.png") center / contain no-repeat; width: 140px; height: 100%; display: block; position: relative; float: right; } 
+
+.page-footer{ position: absolute; right: 0; bottom: 0; left: 0; padding: 1rem; background-color: #002f63; text-align: right; color: #ffffff; } 
+
+/* Link Legal Notice */ 
+
+#legalNotice:link { color: #ffffff; } 
+
+#legalNotice:visited { color: #ffffff; } 
+
+#legalNotice:hover { color: #699b6d4; text-decoration: underline; } 
+
+#legalNotice:active { } 
+
+/* Link Privacy */ 
+
+#legalNotice:link { color: #ffffff; } 
+
+#privacy:visited { color: #ffffff; } 
+
+#privacy:hover { color: #699b6d4; text-decoration: underline; } 
+
+#privacy:active { } 
