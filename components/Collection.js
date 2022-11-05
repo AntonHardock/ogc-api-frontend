@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import OpenLayersWrapper from './OpenLayersWrapper.js'
+import OpenLayersMap from './OpenLayersMap.js'
 
 function Links() { 
     
@@ -87,13 +87,19 @@ function CoordinateReferenceSystems() {
 
 export default function Collection(props) { 
     
+    const {collection, bboxArray, epsgSource, epsgDestination} = props
+
     return (
         <div className="container">
             <div id="content" className="row">
                 <div className="col-lg-12">
-                    <h1 className="mt-5">{props.collection}</h1>
-                    <Links />
-                    <OpenLayersWrapper />
+                    <h1 className="mt-5">{collection}</h1>
+                    <Links/>
+                    <OpenLayersMap
+                        bboxArray={bboxArray}
+                        epsgSource={epsgSource}
+                        epsgDestination={epsgDestination}
+                    />
                     <TemporalExtent/>
                     <CoordinateReferenceSystems/>
                 </div>
