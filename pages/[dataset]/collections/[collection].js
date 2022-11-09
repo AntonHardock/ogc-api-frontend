@@ -9,6 +9,10 @@ export async function getServerSideProps(context) {
   const epsgSource = 'EPSG:4326'
   const epsgDestination = 'EPSG:3857'
 
+  // get WMTS settings
+  const response = await fetch("https://basemap.de/dienste/wmts_capabilities_web_raster.xml")
+  const wmtsCapabilities = await response.text();
+
   //nothing to fetch for now, so simply return current collection from query parameter
   //const url = `http://localhost:3333/api/datasets/${dataset}/collections/${collection}`
   //const res = await fetch(url);
@@ -18,20 +22,22 @@ export async function getServerSideProps(context) {
       collection: collection,
       bboxArray: bboxArray,
       epsgSource: epsgSource,
-      epsgDestination: epsgDestination
+      epsgDestination: epsgDestination,
+      wmtsCapabilities: wmtsCapabilities
     }
   }
 }
 
 
 function CollectionPage(props) { 
-  const {collection, bboxArray, epsgSource, epsgDestination} = props
+  const {collection, bboxArray, epsgSource, epsgDestination, wmtsCapabilities} = props
   
   return (<Collection
     collection={collection}
     bboxArray={bboxArray}
     epsgSource={epsgSource}
     epsgDestination={epsgDestination}
+    wmtsCapabilities={wmtsCapabilities}
   />)
 };
 

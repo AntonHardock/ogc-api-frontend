@@ -8,17 +8,15 @@ import VectorLayer from 'ol/layer/Vector'
 import VectorSource from 'ol/source/Vector'
 import Feature from 'ol/Feature';
 import Polygon from 'ol/geom/Polygon';
-import XYZ from 'ol/source/XYZ';
-import OSM from 'ol/source/OSM';
+import WMTS, {optionsFromCapabilities} from 'ol/source/WMTS';
+import WMTSCapabilities from 'ol/format/WMTSCapabilities';
 import 'ol/ol.css';
-
 
 
 function parseBoundingBox(bboxArray, epsgSource, epsgDestination) { 
     
     // unpack and rearrange coordinates in bboxArray
     const [min_x, min_y, max_x, max_y] = bboxArray
-    
     const coords = [
         [min_x, min_y],
         [min_x, max_y],
@@ -27,7 +25,7 @@ function parseBoundingBox(bboxArray, epsgSource, epsgDestination) {
         [min_x, min_y]
     ]
 
-    // construct polygon (needs an array of linear rings)
+    // construct polygon (expects array of one or multiple linear rings)
     const polygon = new Polygon([coords])    
 
     // construct a feature
@@ -36,16 +34,23 @@ function parseBoundingBox(bboxArray, epsgSource, epsgDestination) {
         name: 'Bounding Box',
     })
 
-    // reproject feature
+    // reproject and return feature
     feature.getGeometry().transform(epsgSource, epsgDestination)
-
-    // return feature inside vector layer
-    return new VectorLayer({
-        source: new VectorSource({
-            features: [feature]
-        }),
-    })
+    return feature
 }
+
+function parseBasemapWMTSoptions(xml) {  
+    const capabilities = new WMTSCapabilities().read(xml);
+    const options = optionsFromCapabilities(capabilities, {
+        layer: 'de_basemapde_web_raster_grau',
+        matrixSet: 'DE_EPSG_3857_ADV',
+        style: 'default',
+        tilePixelRatio: 1,
+        attributions: 'Basiskarte: <a target="_blank" href="https://basemap.de/">basemap.de</a>'   
+    })
+    return options
+}
+
 
 // CAUTION: FIRES TWICE IN DEVELOPEMENT MODE!
 // APPARENTLY; IT NEEDS SOME SORT OF CLEANUP FUNCTION
@@ -56,33 +61,41 @@ export default function OpenLayersMap(props) {
     const mapElement = useRef();
 
     // unpack props
-    const { bboxArray, epsgSource, epsgDestination } = props;
     
-    // turn bboxArray into polygon inside a vector layer
-    const featuresLayer = parseBoundingBox(bboxArray, epsgSource, epsgDestination);
-
-    // prepare background map
-    const osm = new OSM()
-    const basemap = new XYZ({
-        url: 'https://sgx.geodatenzentrum.de/wmts_basemapde/tile/1.0.0/de_basemapde_web_raster_grau/default/DE_EPSG_3857_ADV/{z}/{x}/{y}.png'
-    })
-    
+    // construct and adjust open layers map as sideeffect
     useEffect(() => {
         
+        // construct basemap layer
+        const wmtsOptions = parseBasemapWMTSoptions(props.wmtsCapabilities)
+        const basemapLayer = new TileLayer({
+            source: new WMTS(wmtsOptions),
+        });
+
+        // construct bbox layer
+        const { bboxArray, epsgSource, epsgDestination} = props;
+        const bboxFeature = parseBoundingBox(bboxArray, epsgSource, epsgDestination);
+        const bboxLayer = new VectorLayer({
+            source: new VectorSource({features: [bboxFeature]}), 
+        })
+
+        // construct empty map object
         const initialMap = new Map({
             target: mapElement.current,
             layers: [
-                new TileLayer({ source: osm }),
-                featuresLayer
+                basemapLayer,
+                bboxLayer
             ],
             view: new View({
-                projection: "EPSG:3857",
+                projection: epsgDestination,
                 center: [0, 0],
                 zoom: 0,
             })
-        })
-            
-        initialMap.getView().fit(featuresLayer.getSource().getExtent(), {padding: [100,100,100,100]});
+        });
+
+        // add layers to map and center view to bbox
+        //initialMap.addLayer(basemapLayer);
+        //initialMap.addLayer(bboxLayer);
+        initialMap.getView().fit(bboxLayer.getSource().getExtent(), { padding: [100, 100, 100, 100] });
     } , []);
 
 
