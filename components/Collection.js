@@ -96,8 +96,6 @@ export default function Collection(props) {
                     <OpenLayersMap
                         bboxArray={props.bboxArray}
                         epsgSource={props.epsgSource}
-                        epsgDestination={props.epsgDestination}
-                        wmtsCapabilities={props.wmtsCapabilities}
                     />
                     <TemporalExtent/>
                     <CoordinateReferenceSystems/>

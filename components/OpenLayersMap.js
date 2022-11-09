@@ -2,10 +2,12 @@
 // another reference: https://github.com/tcallsen/react-func-openlayers/blob/master/src/components/MapWrapper.js
 
 import { useEffect, useRef } from 'react';
+import useSWR from 'swr';
 import { Map, View } from 'ol';
 import TileLayer from 'ol/layer/Tile';
 import VectorLayer from 'ol/layer/Vector'
 import VectorSource from 'ol/source/Vector'
+import {Attribution, defaults as defaultControls} from 'ol/control';
 import Feature from 'ol/Feature';
 import Polygon from 'ol/geom/Polygon';
 import WMTS, {optionsFromCapabilities} from 'ol/source/WMTS';
@@ -44,12 +46,14 @@ function parseBasemapWMTSoptions(xml) {
     const options = optionsFromCapabilities(capabilities, {
         layer: 'de_basemapde_web_raster_grau',
         matrixSet: 'DE_EPSG_3857_ADV',
-        style: 'default',
-        tilePixelRatio: 1,
-        attributions: 'Basiskarte: <a target="_blank" href="https://basemap.de/">basemap.de</a>'   
+        style: 'default'
     })
+    options.tilePixelRatio = 1 // see https://openlayers.org/en/latest/examples/wmts-hidpi.html
+    options.attributions = 'Basiskarte: <a target="_blank" href="https://basemap.de/">basemap.de</a>'   
     return options
 }
+
+const fetcher = (...args) => fetch(...args).then((res) => res.text())
 
 
 // CAUTION: FIRES TWICE IN DEVELOPEMENT MODE!
@@ -60,31 +64,43 @@ export default function OpenLayersMap(props) {
     // create a ref hook (simple explanation: https://www.youtube.com/watch?v=t2ypzz6gJm0)
     const mapElement = useRef();
 
-    // unpack props
+    // fetch data using next.js SWR hook as recommended by the framework
+    const basemapUrl = "https://basemap.de/dienste/wmts_capabilities_web_raster.xml"
+    const { data, error } = useSWR(basemapUrl, fetcher)
     
-    // construct and adjust open layers map as sideeffect
-    useEffect(() => {
+    // helper constructing map object    
+    const constructMap = () => { 
         
-        // construct basemap layer
-        const wmtsOptions = parseBasemapWMTSoptions(props.wmtsCapabilities)
+        // set projection
+        const epsgDestination = 'EPSG:3857';
+        
+        //construct basemap layer
+        const wmtsOptions = parseBasemapWMTSoptions(data)
         const basemapLayer = new TileLayer({
             source: new WMTS(wmtsOptions),
         });
 
         // construct bbox layer
-        const { bboxArray, epsgSource, epsgDestination} = props;
-        const bboxFeature = parseBoundingBox(bboxArray, epsgSource, epsgDestination);
+        const bboxFeature = parseBoundingBox(
+            props.bboxArray, props.epsgSource, epsgDestination
+        );
         const bboxLayer = new VectorLayer({
-            source: new VectorSource({features: [bboxFeature]}), 
+            source: new VectorSource({ features: [bboxFeature] }),
         })
 
-        // construct empty map object
+        // create attribution object to make it collapsible
+        const attribution = new Attribution({
+            collapsible: true,
+        });
+
+        // construct map object
         const initialMap = new Map({
             target: mapElement.current,
             layers: [
                 basemapLayer,
                 bboxLayer
             ],
+            controls: defaultControls({ attribution: true }).extend([attribution]),
             view: new View({
                 projection: epsgDestination,
                 center: [0, 0],
@@ -92,13 +108,29 @@ export default function OpenLayersMap(props) {
             })
         });
 
-        // add layers to map and center view to bbox
-        //initialMap.addLayer(basemapLayer);
-        //initialMap.addLayer(bboxLayer);
-        initialMap.getView().fit(bboxLayer.getSource().getExtent(), { padding: [100, 100, 100, 100] });
-    } , []);
+        // center view to bbox
+        initialMap
+            .getView()
+            .fit(bboxLayer.getSource().getExtent(), { padding: [100, 100, 100, 100] });
+    
+        return initialMap;
+        
+    }
+    
+    
+    // prepare cleanup operation for sideeffect 
+    // ensures that mapElement is cleared AFTER data was fetched
+    const cleanup = () => {if (data) { mapElement.current = undefined }}
+    
+    // initiate map as sideeffect
+    useEffect(() => {   
+        if (data) { constructMap() };
+        return cleanup
+    } , [data]);
 
-
+    // render
+    if (error) return <div>Failed to load basemap.de WMTS capabilities</div>
+    if (!data) return <div>Loading...</div>
     return (
         <div className="row mt-2">
             <div className="col-md-3">Spatial Extent</div>
@@ -106,8 +138,7 @@ export default function OpenLayersMap(props) {
                 <div ref={ mapElement} style={{ height: 400, width: 400 }} className="map-container"></div>
             </div>
         </div>
-        )
-
+    )
 }
 
 
