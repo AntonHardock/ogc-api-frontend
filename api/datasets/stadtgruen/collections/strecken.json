@@ -1,1 +1,11 @@
-{ "spatialExtent": "", "temporalExtent": "" }
+{
+  "spatialExtent": {
+    "bbox": [
+      9.88760357810616, 53.575237495759644, 9.899924913417777,
+      53.583581952817084
+    ],
+    "crs": "http://www.opengis.net/def/crs/OGC/1.3/CRS84",
+    "epsg": "EPSG:4326"
+  },
+  "temporalExtent": ""
+}
