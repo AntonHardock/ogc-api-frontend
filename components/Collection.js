@@ -92,11 +92,16 @@ export default function Collection(props) {
             <div id="content" className="row">
                 <div className="col-lg-12">
                     <h1 className="mt-5">{props.collection}</h1>
-                    <Links/>
-                    <OpenLayersMap
-                        bboxArray={props.bboxArray}
-                        epsgSource={props.epsgSource}
-                    />
+                    <Links />
+                    <div className="row mt-2">
+                        <div className="col-md-3">Spatial Extent</div>
+                        <div className="col-md-9">
+                            <OpenLayersMap
+                                bboxArray={props.bboxArray}
+                                epsgSource={props.epsgSource}
+                            />
+                        </div>
+                    </div>
                     <TemporalExtent/>
                     <CoordinateReferenceSystems/>
                 </div>
