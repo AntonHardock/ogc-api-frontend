@@ -7,10 +7,11 @@ import configJson from "../config.json"
 
 const fetcher = (...args) => fetch(...args).then((res) => res.json())
 
-export default function Items(props) { 
+export default function Items(props) {
         
     // set initial router query
     const router = useRouter()
+    const [offset, setOffset] = useState(0)
     router.query = {
         limit: 10,
         offset: 0,
@@ -18,19 +19,36 @@ export default function Items(props) {
         ...router.query
     }
 
-    // useEffect(() => { 
+    function handlePaging(e, n) { 
+        e.preventDefault()
+        setOffset((prevState) => {return prevState + n});
+        const updatedQuery = {
+            ...router.query,
+            offset: offset
+        }
+        router.push({ pathname: router.pathname, query: updatedQuery }, undefined, { shallow: true })
+    };
+
+    console.log(offset)
+
+    // Always do navigations after the first render
+    // useEffect(() => {
+    //     router.push({ pathname: router.pathname, query: router.query }, undefined, { shallow: true })
+    // }, [])
+    
+    // useEffect(() => {
     //     if (!router.isReady) { return }
     //     router.query = {
-    //         limit: 10,
-    //         offset: 0,
-    //         crs: requestEPSG,
+    //         offset: offset,
     //         ...router.query
     //     }
-    // }, [router.isReady])
+    //     router.push({ pathname: router.pathname, query: router.query })
+    // }, [router.isReady, offset])
     
     // get data
     function makeRequest(queryParams) { 
         const { dataset, collection, ...params } = queryParams
+        params.offset = offset;
         const usp = new URLSearchParams(params);
         usp.delete("f") // remove format key since it is hardcoded in the url
         usp.sort();
@@ -58,17 +76,16 @@ export default function Items(props) {
             <hr/>
             <div className="row justify-content-between" id="content">
                 <div id="app" className="col-md">
-                    <PagingNavbar/>
+                    <Paging handlePaging={handlePaging} />
                     <ItemsTable features={data.features} />
-                    <PagingNavbar/>             
                 </div>
                 <div id="map" className="col-md">
-                    <OpenLayersMap geoJsonObject={data} />
+                    
                 </div>
             </div>
         </div>
     )
-}
+} // <OpenLayersMap geoJsonObject={data} />
 
 
 function ItemsTable(props) { 
@@ -172,3 +189,11 @@ function PagingNavbar(props) {
     )
 }
 
+function Paging(props) { 
+    return (
+        <>
+            <button onClick={(e) => props.handlePaging(e, -10)}>Previous</button>
+            <button onClick={(e) => props.handlePaging(e, 10)}>Next</button>
+        </>
+    )
+}
