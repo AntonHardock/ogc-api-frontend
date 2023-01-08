@@ -89,14 +89,14 @@ function ItemsTable(props) {
         const path = useRouter().asPath;
         const { id, properties } = feature;
         return (
-            <tr role="row" className="">
+            <tr key={id} role="row" className="">
                 <td aria-colindex="1" role="cell" className="">
                     <div className="card">                                            
                         <div className="card-header">
                             <Link href={path + "/" + id}>{id}</Link>
                         </div>
                         <div className="card-body">                                
-                            <p className="card-text">
+                            <div className="card-text">
                                 <table className="table table-striped">
                                     <thead>
                                         <tr>
@@ -108,7 +108,7 @@ function ItemsTable(props) {
                                         {parseProperties(properties)}
                                     </tbody>
                                 </table>
-                            </p>
+                            </div>
                         </div>
                     </div>
                 </td>

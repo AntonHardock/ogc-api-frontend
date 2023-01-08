@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 
 function CoordinateReferenceSystems(props) { 
     const crsList = props.crsList.map((crs) => { 
-        return <div className="col-md-12">{crs}</div>
+        return <div key={crs} className="col-md-12">{crs}</div>
     })
     return crsList
 }
