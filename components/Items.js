@@ -9,65 +9,44 @@ const fetcher = (...args) => fetch(...args).then((res) => res.json())
 
 export default function Items(props) {
         
-    // set initial router query
+    // set initial component state
+    const [offset, setOffset] = useState(0);
     const router = useRouter()
-    const [offset, setOffset] = useState(0)
     router.query = {
         limit: 10,
         offset: 0,
         crs: props.requestEPSG,
         ...router.query
-    }
+    };
 
     function handlePaging(e, n) { 
-        e.preventDefault()
+        e.preventDefault();
         setOffset((prevState) => {
-            const newState = prevState + n
+            const newState = prevState + n;
             router.query = {
                 ...router.query,
                 offset: newState,
-            }
-            return newState
+            };
+            return newState;
         });
         
     };
-
-    // Always do navigations after the first render
-    // useEffect(() => {
-    //     router.push({ pathname: router.pathname, query: router.query }, undefined, { shallow: true })
-    // }, [])
-
-    // this almost works!!
-    // useEffect(() => { 
-    //     router.query = {
-    //         ...router.query,
-    //         offset: offset,
-    //     }
-    //     console.log("useEffect:" + offset)
-    //     console.log("useEffect:" + router.query)
-    // }, [offset])
     
-    // useEffect(() => {
-    //     if (!router.isReady) { return }
-    //     router.query = {
-    //         offset: offset,
-    //         ...router.query
-    //     }
-    //     //router.push({ pathname: router.pathname, query: router.query })
-    // }, [router.isReady, offset])
+    // enable shallow routing when parameters change
+    useEffect(() => {
+        if (!router.isReady) { return }
+        router.push({ pathname: router.pathname, query: router.query })
+    }, [router.isReady, router.query])
     
-    // get data
-    function makeRequest(query) { 
-        
+    // get data via api
+    function makeRequest(query) {      
         // unpack router query parameters
         const { dataset, collection, ...params } = query;
-        
         // ensure offset received from router is in sync with offset state as changed by pagination
         params.offset = parseInt(params.offset);
         if (params.offset !== offset) { 
             setOffset(params.offset)
         }
-
         // parse parameters and make api call
         const usp = new URLSearchParams(params);
         usp.delete("f") // remove format key since it is hardcoded in the url
@@ -75,8 +54,7 @@ export default function Items(props) {
         const url = `${props.endpoint}/${dataset}/collections/${collection}/items?f=json&${usp.toString()}`
         const { data, error } = useSWR(url, fetcher, { revalidateOnFocus: false })
         return {data, error}
-    }
-        
+    };  
     const { data, error } = makeRequest(router.query);
 
     // render
