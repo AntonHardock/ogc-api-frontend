@@ -21,20 +21,31 @@ export default function Items(props) {
 
     function handlePaging(e, n) { 
         e.preventDefault()
-        setOffset((prevState) => {return prevState + n});
-        const updatedQuery = {
-            ...router.query,
-            offset: offset
-        }
-        router.push({ pathname: router.pathname, query: updatedQuery }, undefined, { shallow: true })
+        setOffset((prevState) => {
+            const newState = prevState + n
+            router.query = {
+                ...router.query,
+                offset: newState,
+            }
+            return newState
+        });
+        
     };
-
-    console.log(offset)
 
     // Always do navigations after the first render
     // useEffect(() => {
     //     router.push({ pathname: router.pathname, query: router.query }, undefined, { shallow: true })
     // }, [])
+
+    // this almost works!!
+    // useEffect(() => { 
+    //     router.query = {
+    //         ...router.query,
+    //         offset: offset,
+    //     }
+    //     console.log("useEffect:" + offset)
+    //     console.log("useEffect:" + router.query)
+    // }, [offset])
     
     // useEffect(() => {
     //     if (!router.isReady) { return }
@@ -42,22 +53,28 @@ export default function Items(props) {
     //         offset: offset,
     //         ...router.query
     //     }
-    //     router.push({ pathname: router.pathname, query: router.query })
+    //     //router.push({ pathname: router.pathname, query: router.query })
     // }, [router.isReady, offset])
     
     // get data
-    function makeRequest(queryParams) { 
-        const { dataset, collection, ...params } = queryParams
-        params.offset = offset;
+    function makeRequest(query) { 
+        
+        // unpack router query parameters
+        const { dataset, collection, ...params } = query;
+        
+        // ensure offset received from router is in sync with offset state as changed by pagination
+        params.offset = parseInt(params.offset);
+        if (params.offset !== offset) { 
+            setOffset(params.offset)
+        }
+
+        // parse parameters and make api call
         const usp = new URLSearchParams(params);
         usp.delete("f") // remove format key since it is hardcoded in the url
-        usp.sort();
+        usp.sort(); // sort parameters since deviating order is interpreted as new key by useSWR, triggering unnesseccary refresh
         const url = `${props.endpoint}/${dataset}/collections/${collection}/items?f=json&${usp.toString()}`
         const { data, error } = useSWR(url, fetcher, { revalidateOnFocus: false })
-        return {
-            data,
-            error
-        }
+        return {data, error}
     }
         
     const { data, error } = makeRequest(router.query);
