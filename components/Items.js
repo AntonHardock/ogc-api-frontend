@@ -32,10 +32,15 @@ export default function Items(props) {
         
     };
     
-    // enable shallow routing when parameters change
+    // enable shallow routing when search params change (see https://github.com/vercel/next.js/discussions/40256)
     useEffect(() => {
         if (!router.isReady) { return }
-        router.push({ pathname: router.pathname, query: router.query })
+        const url = new URL(window.location);
+        const { dataset, collection, ...params} = router.query
+        const usp = new URLSearchParams(params);
+        usp.sort();
+        url.search = usp.toString();
+        window.history.pushState({}, '', url);
     }, [router.isReady, router.query])
     
     // get data via api
@@ -49,7 +54,7 @@ export default function Items(props) {
         }
         // parse parameters and make api call
         const usp = new URLSearchParams(params);
-        usp.delete("f") // remove format key since it is hardcoded in the url
+        usp.delete("f") // remove format key since it is hardcoded in the api url
         usp.sort(); // sort parameters since deviating order is interpreted as new key by useSWR, triggering unnesseccary refresh
         const url = `${props.endpoint}/${dataset}/collections/${collection}/items?f=json&${usp.toString()}`
         const { data, error } = useSWR(url, fetcher, { revalidateOnFocus: false })
@@ -75,12 +80,12 @@ export default function Items(props) {
                     <ItemsTable features={data.features} />
                 </div>
                 <div id="map" className="col-md">
-                    
+                    <OpenLayersMap geoJsonObject={data} />
                 </div>
             </div>
         </div>
     )
-} // <OpenLayersMap geoJsonObject={data} />
+}; 
 
 
 function ItemsTable(props) { 
@@ -143,46 +148,8 @@ function ItemsTable(props) {
                 </table>
             </div>
         </div>
-    )
-    
-}
-
-function PagingNavbar(props) { 
-    
-    return (
-        <div className="row">
-            <div className="col d-flex justify-content-center">
-                <nav aria-hidden="false" kex="1">
-                    <ul role="menubar" aria-disabled="false" aria-label="Pagination" className="pagination b-pagination">
-                        <li role="presentation" aria-hidden="true" className="page-item disabled">
-                            <span role="menuitem" aria-label="Go to first page" aria-disabled="true" className="page-link">
-                                «
-                            </span>
-                        </li>
-                        <li role="presentation" aria-hidden="true" className="page-item disabled">
-                            <span role="menuitem" aria-label="Go to previous page" aria-disabled="true" className="page-link">
-                                ‹
-                            </span>
-                        </li>
-                        <li role="presentation" className="page-item active">
-                            <a href="/datasets/v1/stadtgruen/collections/umring/items?limit=2&amp;offset=0" className="page-link" role="menuitemradio" aria-label="Go to page 1" aria-checked="true" aria-posinset="1" aria-setsize="1" tabIndex="0">1</a>
-                        </li>
-                        <li role="presentation" aria-hidden="true" className="page-item disabled">
-                            <span role="menuitem" aria-label="Go to next page" aria-disabled="true" className="page-link">
-                                ›
-                            </span>
-                        </li>
-                        <li role="presentation" aria-hidden="true" className="page-item disabled">
-                            <span role="menuitem" aria-label="Go to last page" aria-disabled="true" className="page-link">
-                                »
-                            </span>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
-        </div>
-    )
-}
+    )   
+};
 
 function Paging(props) { 
     return (
