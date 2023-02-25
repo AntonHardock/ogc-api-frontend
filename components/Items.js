@@ -3,7 +3,6 @@ import useSWR from 'swr';
 import {useState, useEffect} from 'react';
 import { useRouter } from "next/router";
 import OpenLayersMap from './OpenLayersMap.js'
-import configJson from "../config.json"
 
 const fetcher = (...args) => fetch(...args).then((res) => res.json())
 
@@ -77,7 +76,10 @@ export default function Items(props) {
             <div className="row justify-content-between" id="content">
                 <div id="app" className="col-md">
                     <Paging handlePaging={handlePaging} />
-                    <ItemsTable features={data.features} />
+                    <ItemsTable
+                        features={data.features}
+                        resolvedUrl={props.resolvedUrl}
+                    />
                 </div>
                 <div id="map" className="col-md">
                     <OpenLayersMap geoJsonObject={data} />
@@ -103,14 +105,13 @@ function ItemsTable(props) {
     };
 
     function createItemTable(feature) { 
-        const path = useRouter().asPath;
         const { id, properties } = feature;
         return (
             <tr key={id} role="row" className="">
                 <td aria-colindex="1" role="cell" className="">
                     <div className="card">                                            
                         <div className="card-header">
-                            <Link href={path + "/" + id}>{id}</Link>
+                            <Link href={props.resolvedUrl + "/" + id}>{id}</Link>
                         </div>
                         <div className="card-body">                                
                             <div className="card-text">

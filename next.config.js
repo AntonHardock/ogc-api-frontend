@@ -1,4 +1,8 @@
 /** @type {import('next').NextConfig} */
+
+const configJson = require('./config.json') // import statement does not work here!
+const { oaf } = configJson
+
 const nextConfig = {
   reactStrictMode: false,
   swcMinify: true,
@@ -7,7 +11,12 @@ const nextConfig = {
       beforeFiles: [
         {
           source: '/:dataset/collections/:collection/items',
-          destination: 'https://api.hamburg.de/datasets/v1/:dataset/collections/:collection/items?f=json',
+          destination: `${oaf.endpoint}/:dataset/collections/:collection/items?f=json`,
+          has: [{ type: 'query', key: 'f', value: "json" }],
+        },
+        {
+          source: '/:dataset/collections/:collection/items/:item',
+          destination: `${oaf.endpoint}/:dataset/collections/:collection/items/:item?f=json`,
           has: [{ type: 'query', key: 'f', value: "json" }],
         }
       ]
