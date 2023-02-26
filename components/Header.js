@@ -1,5 +1,15 @@
-
 export default function Header() { 
+    
+    const handleClick = (e) => {
+        
+        e.preventDefault();
+        const url = new URL(window.location)
+        const usp = new URLSearchParams(window.location.search);
+        usp.append("f", "json")
+        url.search = usp.toString();
+        window.location.href = url;
+    }
+
     return (
         <header>
             <nav className="navbar navbar-default">
@@ -10,7 +20,7 @@ export default function Header() {
                     </ul>
                     <ul className="nav justify-content-end">
                         <li className="nav-item">
-                            <a className="nav-link" href="?f=json" target="_blank">JSON</a>
+                            <a className="nav-link" onClick={handleClick} target="_blank">JSON</a>
                         </li>
                         <li className="nav-item">
                             <a className="nav-link disabled" href="?f=html" tabIndex="-1" aria-disabled="true" target="_blank">HTML</a>
@@ -21,3 +31,4 @@ export default function Header() {
         </header>
     );
 }
+
