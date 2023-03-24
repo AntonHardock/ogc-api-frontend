@@ -10,7 +10,6 @@ function CoordinateReferenceSystems(props) {
 
 function CollectionsList(props) { 
     
-    //access current path
     const path = useRouter().asPath;
 
     const listItems = props.collections.map((collection) => {

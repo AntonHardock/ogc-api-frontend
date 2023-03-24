@@ -4,7 +4,6 @@ import OpenLayersMap from './OpenLayersMap.js'
 
 function Links() { 
     
-    //access current path
     const path = useRouter().asPath;
     
     return (
@@ -16,48 +15,6 @@ function Links() {
                 </div>
             </div>
         </div>
-    )
-}
-
-function SpatialExtent() { 
-    return (
-        <div className="row mt-2">
-        <div className="col-md-3">Spatial Extent</div>
-        <div className="col-md-9">
-            <div id="map" className="map">
-                <div className="ol-viewport" style="position: relative; overflow: hidden; width: 100%; height: 100%;">
-                    <div style="position: absolute; width: 100%; height: 100%; z-index: 0;" className="ol-unselectable ol-layers">
-                        <div className="ol-layer" style="position: absolute; width: 100%; height: 100%;">
-                            <canvas style="position: absolute; left: 0px; transform-origin: left top 0px; transform: matrix(0.8, 0, 0, 0.8, 0.1, 0);" width="1031" height="500"></canvas>
-                        </div>
-                        <div className="ol-layer" style="position: absolute; width: 100%; height: 100%;">
-                            <canvas style="position: absolute; left: 0px; transform-origin: left top 0px; transform: matrix(0.8, 0, 0, 0.8, 0, 0);" width="1031" height="500"></canvas>
-                        </div>
-                    </div>
-                    <div style="position: absolute; z-index: 0; width: 100%; height: 100%; pointer-events: none;" className="ol-overlaycontainer"></div>
-                    <div style="position: absolute; z-index: 0; width: 100%; height: 100%; pointer-events: none;" className="ol-overlaycontainer-stopevent">
-                        <div style="pointer-events: auto;" className="ol-zoom ol-unselectable ol-control">
-                            <button className="ol-zoom-in" type="button" title="Zoom in">+</button>
-                            <button className="ol-zoom-out" type="button" title="Zoom out">–</button>
-                        </div>
-                        <div style="pointer-events: auto;" className="ol-rotate ol-unselectable ol-control ol-hidden">
-                            <button className="ol-rotate-reset" type="button" title="Reset rotation">
-                                <span className="ol-compass" style="transform: rotate(0rad);">⇧</span>
-                            </button>
-                        </div>
-                        <div style="pointer-events: auto;" className="ol-attribution ol-unselectable ol-control ol-uncollapsible">
-                            <button type="button" aria-expanded="true" title="Attributions">
-                                <span className="ol-attribution-expand">i</span>
-                            </button>
-                            <ul>
-                                <li>© <a href="http://www.bkg.bund.de" target="_new">Bundesamt für Kartographie und Geodäsie</a></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
     )
 }
 
@@ -109,8 +66,3 @@ export default function Collection(props) {
         </div>
     )
 }
-
-// export default function Collection(props) { 
-    
-//     return (<MapWrapperSimple />)
-// }

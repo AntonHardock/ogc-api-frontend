@@ -3,7 +3,6 @@ import {useRouter} from 'next/router'
 
 export default function Dataset(props) { 
     
-    //access current path
     const path = useRouter().asPath;
 
     return (
