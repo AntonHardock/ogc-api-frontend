@@ -3,7 +3,7 @@ import configJson from "../../config.json"
 
 export const getServerSideProps = async (context) => { 
     const { dataset } = context.query
-    const res = await fetch("http://localhost:3333/api/datasets/" + dataset + "/collections" );
+    const res = await fetch("http://localhost:3333/mock_data/datasets/" + dataset + "/collections" );
     const data = await res.json();
     return {
         props: { collections: data }

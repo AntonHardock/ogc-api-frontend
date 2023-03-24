@@ -6,7 +6,7 @@ import swagger from "../../swagger"
 export async function getServerSideProps(context) {
     
   const { dataset } = context.query;  
-  const res = await fetch(`http://localhost:3333/api/datasets/${dataset}`);
+  const res = await fetch(`http://localhost:3333/mock_data/datasets/${dataset}`);
   const {title, description} = await res.json();
 
   const { info } = swagger;
