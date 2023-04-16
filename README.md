@@ -36,4 +36,4 @@ Below figure illustrates a possible deployment draft.
 Data requests shall be routed directly to responsible APIs while
 html preview and documentation requests go to OGC API Frontend:
 
-![Deployment draft](./docs/architecture.png)
+![Deployment draft](docs/architecture.jpg)
