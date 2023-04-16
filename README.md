@@ -1,34 +1,39 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# OGC API Frontend
 
-## Getting Started
+A React + NextJS prototype implementing only presentational capabilities of the OGC API:
+data previews, map previews and Open API documentation pages.
+See `./docs` for setup instructions and ideas for further development.
 
-First, run the development server:
+## The goal
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+The intended use is a microservice architecture: different OGC API Specs
+(features, tiles, maps etc.) shall be served by standalone implementations.
+Those services would only need to implement core API functionalities.
+With this prototype, all presentational logic for data, metadata and documentation could be centralized. It would act as a unified entrypoint for all preview and documentation needs.
+The approach facilitates replacing or further developing the underlying APIs.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Demo
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+For demonstration purposes, the prototype partially implements the OGC Open API Features Spec. The actual geodata requests are forwarded to https://api.hamburg.de/datasets/v1.
+It is a live example of an OGC API Features implementation, serving Open Data from Hamburg.
+The demo reuses a few of its datasets as well as the application's CSS.
+Going forward, the prototype can be extended to add new endpoints (e.g. /tiles) which
+could be served from different sources.
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+## Metadata middleware
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+All metadata on datasets, collections and API documentation come from a separate mock-api,
+which is also included in the demo. In a production environment, that mockup would be replaced by a proper backend. Additional middleware to fetch and provide metadata conforming to OGC API and Open API Specs is **not necessary**. For that, the API routes functionality of Next.js is used. As this is an early development draft, JSON responses covered by API routes do not conform to aforementioned standards.
 
-## Learn More
+## Deployment draft
 
-To learn more about Next.js, take a look at the following resources:
+When requesting the actual geodata (so called "features" coming from /items or /item endpoints),
+Next.js rewrites are used to forward requests to the features API (see included next.config.js).
+This is for demonstration and development purposes only since the setup is simple.
+A production environment would use a separate reverse proxy.
+Otherwise, the OGC API Frontend becomes an unnesseccary bottleneck.
+Below figure illustrates a possible deployment draft.
+Data requests shall be routed directly to responsible APIs while
+html preview and documentation requests go to OGC API Frontend:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+![Deployment draft](./docs/architecture.png)
